@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Resume</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    </head>
+    <style>
+        .set{
+            display: inline-block;
+            width: 30%;
+            margin: 1.5%;
+        }
+        .set img{
+            border-radius: 0.2rem;
+            padding-bottom: 10px;
+            width: 100%;
+        }
+        .message{
+            display: inline-block;
+            width: 100%;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 3px solid grey;
+        }
+        #submit{
+            float: right;
+            border-radius: 0;
+            display: inline-block;
+            width: 100px;
+        }
+    </style>
+    <body>
+        <div class="container">
+            <div class="row" id="back">
+                <div class="col-md-4 p-0">
+                    <h3>劉皪  Leo</h3>
+                    <p class="m-0">住在台北市</p>
+                    <p class="m-0">目前23歲，希望可以為社會做點事的大學生</p>
+                    <hr>
+                    <h6>政治大學</h6>
+                    <h6>資訊管理學系</h6>
+                    <h6>aleoliu566@gmail.com</h6>
+                    <h6>Taipei,Taiwan</h6>
+                    <h6>金牛座</h6>
+                </div>
+                <div class="col-md-8 p-0">
+                    <img src="" id="photo1" alt="" style="width: 80%; margin: 0 10%;">
+                </div>
+
+                <div class="col-md-12 p-0">
+                    <h4>關於我</h4>
+                    <div class="set">
+                      <img id="ic" src="">
+                        <h4 class="card-title">IC部落社</h4>參與IC部落社的營隊，到山上服務，為小朋友帶來歡樂，擔任攝影組及美宣組。
+                    </div>
+                    <div class="set">
+                      <img id="japan" src="">
+                        <h4 class="card-title">日本旅遊</h4>2016年九月曾經與家人到日本東京旅遊，體驗當地文化。
+                    </div>
+                    <div class="set">
+                      <img id="thread" src="">
+                        <h4 class="card-title">喜歡的動物</h4>我最喜歡的動物是刺蝟，希望未來有機會養一隻刺蝟作為寵物。
+                    </div>
+                </div>
+                <div class="message">
+                  <h4>留言給我</h4>
+                  <span>作者：</span>
+                  <input type="text" id="name" maxlength="10" required>
+                  <br><br>
+                  <span>留言：</span>
+                  <textarea name="" id="messageInput" cols="70" rows="4"></textarea><br>
+                  <span class="warn"></span>
+                  <input type="submit" id="submit">
+                </div>
+            </div>
+        </div>
+    </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyDAJRb2hjSS8D9L70ygCRyyV92Wt-F5WJQ",
+        authDomain: "resume-f29f8.firebaseapp.com",
+        databaseURL: "https://resume-f29f8.firebaseio.com",
+        storageBucket: "resume-f29f8.appspot.com",
+        messagingSenderId: "960600128782"
+    };
+    firebase.initializeApp(config);
+
+    
+    // var comment = storageRef.child('comment/secret-message.txt'); 
+    // comment.putString("hello ~~~ ").then(function(snapshot) {
+    //   console.log('成功上傳純 字檔案'); 
+    // });
+
+    // 取得圖片id
+    var img = document.getElementById('photo1');
+    var ic = document.getElementById('ic');
+    var japan = document.getElementById('japan');
+    var thread = document.getElementById('thread');
+    
+    var storage = firebase.storage();
+    var storageRef = storage.ref();
+    var picStorage = storageRef.child('images/3.jpg');
+    var picStorage2 = storageRef.child('images/ic.jpg');
+    var picStorage3 = storageRef.child('images/2.jpg');
+    var picStorage4 = storageRef.child('images/thread.jpg');
+
+    picStorage.getDownloadURL().then(function(url){
+        console.log(url);
+        img.src = url;
+    });
+    picStorage2.getDownloadURL().then(function(url){
+        console.log(url);
+        ic.src = url;
+    });
+    picStorage3.getDownloadURL().then(function(url){
+        console.log(url);
+        japan.src = url;
+    });
+    picStorage4.getDownloadURL().then(function(url){
+        console.log(url);
+        thread.src = url;
+    });
+
+    // 按下按鈕後，上傳留言至storage bucket
+    $('#submit').click(function(){
+        var Today = new Date();
+        var n = Today.getFullYear()+" "+(Today.getMonth()+1)+" "+Today.getDate()+" "+Today.getHours()+" "+Today.getMinutes()+" "+Today.getSeconds();
+
+        var name = $('#name').val();
+        var message = $('#messageInput').val();
+        if(name=="" || message ==""){
+            $('.warn').html("請填寫完整！！");
+        }else{
+            var a = storageRef.child('message/secret-message-'+n+name+'.txt');
+            a.putString(message).then(function(snapshot){
+                console.log("success");
+                $('.warn').html("收到囉！");
+            });
+            $('#name').val("");
+            $('#messageInput').val("");
+        }
+    });
+  </script>
+</html>
